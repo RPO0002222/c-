@@ -1,0 +1,72 @@
+#include <iostream>
+using namespace std;
+
+class Date {
+private:
+    int day;
+    int month;
+    int year;
+
+    // Вспомогательный метод для получения количества дней в месяце
+    int daysInMonth(int month) const {
+        // Месяцы с 30 днями
+        if (month == 4  month == 6  month == 9 || month == 11) {
+            return 30;
+        }
+        // Февраль (28 дней)
+        if (month == 2) {
+            return 28;
+        }
+        // Остальные  имеют 31 день
+        return 31;
+    }
+
+public:
+    // Конструктор
+    Date(int d, int m, int y) : day(d), month(m), year(y) {
+       
+    }
+
+    // Перегрузка оператора - 
+    int operator-(const Date& other) const {
+        
+        int totalDays1 = day;
+        int totalDays2 = other.day;
+
+        // Считаем дни в полных месяцах до текущей даты
+        for (int m = 1; m < month; m++) {
+            totalDays1 += daysInMonth(m);
+        }
+        for (int m = 1; m < other.month; m++) {
+            totalDays2 += daysInMonth(m);
+        }
+
+        // количество полных лет, предшествующих текущему году
+        for (int y = 1; y < year; y++) {
+            totalDays1 += 365; 
+        }
+        for (int y = 1; y < other.year; y++) {
+            totalDays2 += 365; 
+        }
+
+        return totalDays1 - totalDays2;
+    }
+    // Метод для вывода даты
+    void print() const {
+        cout << day << "/" << month << "/" << year << endl;
+    }
+};
+
+int main()
+{
+    setlocale(LC_ALL, "Russian");
+
+    Date date1(15, 2, 2000);
+    Date date2(13, 2, 2023);
+
+    
+    int difference = date2 - date1;
+    cout << "Разница между датами: " << difference << " дней." << endl;
+
+    return 0;
+}
