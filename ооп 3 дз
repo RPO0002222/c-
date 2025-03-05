@@ -60,31 +60,31 @@ public:
 
     // гетеры и сетеры
     int getFullName() const { return fullName; }
-    void setFullName(const string &name) { fullName = name; }
+    void setFullName(const int &name) { fullName = name; }
 
     int getBirthDate() const { return birthDate; }
-    void setBirthDate(const string &date) { birthDate = date; }
+    void setBirthDate(const int &date) { birthDate = date; }
 
     int getPhone() const { return phone; }
-    void setPhone(const string &phone) { this->phone = phone; }
+    void setPhone(const int &phone) { this->phone = phone; }
 
     int getCity() const { return city; }
-    void setCity(const string &city) { this->city = city; }
+    void setCity(const int &city) { this->city = city; }
 
     int getCountry() const { return country; }
-    void setCountry(const string &country) { this->country = country; }
+    void setCountry(const int &country) { this->country = country; }
 
     int getUniversity() const { return university; }
-    void setUniversity(const string &university) { this->university = university; }
+    void setUniversity(const int &university) { this->university = university; }
 
     int getUniversityCity() const { return universityCity; }
     void setUniversityCity(const string &city) { universityCity = city; }
 
     int getUniversityCountry() const { return universityCountry; }
-    void setUniversityCountry(const string &country) { universityCountry = country; }
+    void setUniversityCountry(const int &country) { universityCountry = country; }
 
     int getGroupNumber() const { return groupNumber; }
-    void setGroupNumber(const string &number) { groupNumber = number; }
+    void setGroupNumber(const int &number) { groupNumber = number; }
 };
 
 int main() {
