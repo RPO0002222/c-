@@ -1,0 +1,133 @@
+#include <iostream>
+using namespace std;
+
+class Student {
+private:
+    int fullName; 
+    int birthDate; 
+    int phone;
+
+public:
+    // Конструктор
+    Student(const int &name = "", const int &date = "", const int &phone = "") 
+        : fullName(name), birthDate(date), phone(phone) {}
+
+    // Деструктор
+    ~Student() {}
+
+    // Геттеры и сеттеры
+    int getFullName() const { return fullName; }
+    void setFullName(const int &name) { fullName = name; }
+
+    int getBirthDate() const { return birthDate; }
+    void setBirthDate(const int &date) { birthDate = date; }
+
+    int getPhone() const { return phone; }
+    void setPhone(const int &phone) { this->phone = phone; }
+};
+class Point {
+private:
+    int x; 
+    int y; 
+
+public:
+    // Конструктор
+    Point(int xCoord = 0, int yCoord = 0) : x(xCoord), y(yCoord) {}
+
+    // Деструктор
+    ~Point() {}
+
+    // гетеры и сетеры
+    int getX() const { return x; }
+    void setX(int xCoord) { x = xCoord; }
+
+    int getY() const { return y; }
+    void setY(int yCoord) { y = yCoord; }
+};
+class Car {
+private:
+    int model; 
+    int licensePlate; 
+
+public:
+    // Конструктор
+    Car(const int &model = "", const int &plate = "") : model(model), licensePlate(plate) {}
+
+    // Деструктор
+    ~Car() {}
+
+    // гетеры и сетеры
+    int getModel() const { return model; }
+    void setModel(const int &model) { this->model = model; }
+    
+    int getLicensePlate() const { return licensePlate; }
+    void setLicensePlate(const int &plate) { licensePlate = plate; }
+};
+class Fraction {
+private:
+    int numerator; 
+    int denominator; 
+
+public:
+    // Конструктор
+    Fraction(int num = 0, int denom = 1) : numerator(num), denominator(denom) {
+        if (denominator == 0) {
+            denominator = 1; 
+        }
+    }
+
+    // Деструктор
+    ~Fraction() {}
+
+    // гетеры и сетеры
+    int getNumerator() const { return numerator; }
+    void setNumerator(int num) { numerator = num; }
+
+    int getDenominator() const { return denominator; }
+    void setDenominator(int denom) { 
+        if (denom != 0) {
+            denominator = denom; 
+        }
+    }
+};
+class Rectangle {
+private:
+    int width;
+    int height; 
+
+public:
+    // Конструктор
+    Rectangle(int w = 0, int h = 0) : width(w), height(h) {}
+
+    // Деструктор
+    ~Rectangle() {}
+
+    // гетеры и сетеры
+    int getWidth() const { return width; }
+    void setWidth(int w) { width = w; }
+
+    int getHeight() const { return height; }
+    void setHeight(int h) { height = h; }
+
+    // Метод для вычисления площади
+    int area() const { return width * height; }
+};
+int main() {
+    
+    Student student("Павел Павлов", "01.01.2007", "+7 (900) 999-90-90");
+    cout << "Студент: " << student.getFullName() << ", Дата рождения: " << student.getBirthDate() << endl;
+    
+    Point point(3.5, 4.0);
+    cout << "Точка: (" << point.getX() << ", " << point.getY() << ")" << endl;
+
+    Car car("Toyota", "A123BC");
+    cout << "Машина: " << car.getModel() << ", Номерной знак: " << car.getLicensePlate() << endl;
+
+    Fraction fraction(3, 4);
+    cout << "Дробь: " << fraction.getNumerator() << "/" << fraction.getDenominator() << endl;
+
+    Rectangle rectangle(5.0, 3.0);
+    cout << "Площадь прямоугольника: " << rectangle.area() << endl;
+
+    return 0;
+}
