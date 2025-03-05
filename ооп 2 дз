@@ -1,0 +1,59 @@
+#include <iostream>
+using namespace std;
+
+class Drob {
+private:
+    int chisl, znamen;
+
+    int NOD(int x, int y) { return y == 0 ? x : NOD(y, x % y); } // Наибольший общий делитель 
+
+public:
+
+    void input(int c, int z) { chisl = c; znamen = z; } // Инициализация
+
+    void reduct() { int nod = NOD(chisl, znamen); chisl /= nod; znamen /= nod; } // Сокращение
+
+    void sum(int x) { chisl += x * znamen; reduct(); } // Сложение
+    void sub(int x) { chisl -= x * znamen; reduct(); } // Вычитание
+    void mult(int x) { chisl *= x; reduct(); }         // Умножение
+    void div(int x) { znamen *= x; reduct(); }         // Деление
+
+    void show() { cout << "Дробь: " << chisl << '/' << znamen << endl; } // Вывод
+};
+
+int main() {
+
+    setlocale(LC_ALL, "Russian");
+
+    int a, b, m;
+    char c = 'y';
+    cout << "Введите числитель и знаменатель: ";
+    cin >> a >> b;
+
+    Drob obj;
+    obj.input(a, b);
+
+    do {
+        obj.show();
+        cout << "1: Сложение\n2: Вычитание\n3: Умножение\n4: Деление\nВыберите действие: ";
+        cin >> m;
+
+        cout << "Введите число: ";
+        cin >> a;
+
+        switch (m) {
+
+        case 1: obj.sum(a); break;
+        case 2: obj.sub(a); break;
+        case 3: obj.mult(a); break;
+        case 4: obj.div(a); break;
+
+        default: cout << "Неверный выбор!\n";
+        }
+
+        cout << "Вывод : ";
+        cin >> c;
+    } while (c == 'y');
+
+    return 0;
+}
