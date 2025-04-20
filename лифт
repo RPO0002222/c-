@@ -1,0 +1,77 @@
+#include <iostream>
+using namespace std;
+
+class Lift 
+{
+private:
+    int minFloor;
+    int maxFloor;
+    int currentFloor;
+    bool isWorking;
+
+public:
+    // Конструктор 
+    Lift(int min, int max, int startFloor) 
+{
+        minFloor = min;
+        maxFloor = max;
+        currentFloor = startFloor;
+        
+    }
+
+    // Включить лифт
+    void turnOn() {
+        isWorking = true;
+    }
+
+    // Выключить лифт
+    void turnOff() {
+        isWorking = false;
+    }
+
+    // Получить текущий статус
+    bool getStatus() const {
+        return isWorking;
+    }
+
+    // Получить текущий этаж
+    int getCurrentFloor() const {
+        return currentFloor;
+    }
+
+    // Обработать вызов
+    void call(int targetFloor) {
+        if (!isWorking) {
+            cout << "Лифт выключен. Включите его для работы.\n";
+            return;
+        }
+        if (targetFloor < minFloor || targetFloor > maxFloor) {
+            cout << "Неверный этаж. Диапазон: " << minFloor << "-" << maxFloor << ".\n";
+            return;
+        }
+        currentFloor = targetFloor;
+        cout << "Лифт переместился на этаж " << currentFloor << ".\n";
+    }
+};
+
+// Тестирующая программа
+int main() 
+{
+    Lift elevator(1, 10, 1);
+
+    cout << "Текущий этаж: " << elevator.getCurrentFloor() << endl;
+    cout << "Статус: " << (elevator.getStatus() ? "работает" : "не работает") << "\n\n";
+
+    elevator.turnOn();
+    elevator.call(5);
+    cout << "Текущий этаж: " << elevator.getCurrentFloor() << "\n\n";
+
+    elevator.call(15); 
+    cout << "\n";
+
+    elevator.turnOff();
+    elevator.call(3); 
+    cout << "Текущий этаж: " << elevator.getCurrentFloor() << endl;
+
+    return 0;
+}
