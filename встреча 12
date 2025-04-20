@@ -1,0 +1,117 @@
+#include <iostream>
+
+template <typename T>
+class Array {
+private:
+    T* data;         // Динамический массив элементов
+    int capacity;    // Выделенная память 
+    int count;       // Текущее количество элементов
+    int grow;        // Шаг увеличения размера
+
+public:
+    // Конструктор 
+    Array() : data(nullptr), capacity(0), count(0), grow(1) {}
+
+    // Деструктор
+    ~Array() {
+        delete[] data;
+    }
+
+    // Конструктор копирования
+    Array(const Array& other) : capacity(other.capacity), count(other.count), grow(other.grow) {
+        data = new T[capacity];
+        for (int i = 0; i < count; ++i) {
+            data[i] = other.data[i];
+        }
+    }
+
+    // Оператор присваивания
+    Array& operator=(const Array& other) {
+        if (this != &other) {
+            delete[] data;
+            capacity = other.capacity;
+            count = other.count;
+            grow = other.grow;
+            data = new T[capacity];
+            for (int i = 0; i < count; ++i) {
+                data[i] = other.data[i];
+            }
+        }
+        return *this;
+    }
+
+    // Получение размера выделенной памяти
+    int GetSize() const {
+        return capacity;
+    }
+
+    // Установка размера массива
+    void SetSize(int newSize, int newGrow = 1) {
+        if (newSize < 0) return;
+        grow = newGrow;
+
+        if (newSize == capacity) return;
+
+        // Вычисляем новый размер с учетом шага grow
+        int newCapacity = newSize;
+        if (newSize > capacity) {
+            newCapacity = capacity + ((newSize - capacity + grow - 1) / grow) * grow;
+        }
+
+        T* newData = new T[newCapacity];
+        int elementsToCopy = (count < newSize) ? count : newSize;
+
+        for (int i = 0; i < elementsToCopy; ++i) {
+            newData[i] = data[i];
+        }
+
+        delete[] data;
+        data = newData;
+        capacity = newCapacity;
+
+        if (count > newSize) {
+            count = newSize;
+        }
+    }
+
+    // Получение последнего допустимого индекса
+    int GetUpperBound() const {
+        return (count > 0) ? count - 1 : -1;
+    }
+
+    // Проверка на пустоту
+    bool IsEmpty() const {
+        return (count == 0);
+    }
+
+    // Добавление элемента
+    void Add(const T& element) {
+        if (count >= capacity) {
+            SetSize(capacity + grow);
+        }
+        data[count++] = element;
+    }
+
+    // Оператор доступа по индексу
+    T& operator[](int index) {
+        if (index < 0 || index >= count) {
+            throw std::out_of_range("Индекс вне диапазона");
+        }
+        return data[index];
+    }
+};
+
+int main() {
+    Array<int> arr;
+    arr.SetSize(5, 5); 
+
+    for (int i = 0; i < 6; ++i) {
+        arr.Add(i * 10);
+    }
+
+    cout << "Размер выделенной памяти: " << arr.GetSize() << endl; 
+    cout << "Верхний индекс: " << arr.GetUpperBound() << endl;     
+    cout << "Пуст ли массив? " << (arr.IsEmpty() ? "Да" : "Нет") << endl; 
+
+    return 0;
+}
