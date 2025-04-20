@@ -1,0 +1,56 @@
+#include <iostream>
+using namespace std;
+
+//1. Инкапсуляция
+class Svet {
+private:
+    int red;   
+    int green;
+    int blue;
+
+public:
+    Svet(int r, int g, int b) : red(r), green(g), blue(b);
+
+    // Геттеры и сеттеры 
+    int getRed() const { return red; }
+    int getGreen() const { return green; }
+    int getBlue() const { return blue; }
+
+    void setRed(int r) { red = r; }
+    void setGreen(int g) { green = g; }
+    void setBlue(int b) { blue = b; }
+
+    // Виртуальный метод для полиморфизма
+    virtual void display() const {
+        cout << "RGB: (" << red << ", " << green << ", " << blue << ")\n";
+    }
+};
+
+// 2. Наследование
+class TransparentColor : public Color 
+{
+public:
+    TransparentSvet(int r, int g, int b, float a) : Svet(r, g, b);
+
+    // 3. Полиморфизм
+    void display() const override {
+        cout << "RGBA: (" << getRed() << ", " << getGreen() 
+                  << ", " << getBlue() << ", " << alpha << ")\n";
+    }
+};
+
+// 4. Абстракция
+void printColor(const Color& color) {
+    color.display(); 
+}
+
+int main() 
+{
+    Color color(255, 0, 0);
+    TransparentColor tcolor(255, 0, 0, 0.5f);
+
+    printColor(color);    
+    printColor(tcolor);   
+
+    return 0;
+}
