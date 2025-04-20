@@ -1,0 +1,37 @@
+#include <iostream>
+using namespace std;
+
+// Функция шифрования 
+wchar_t caesar_shift(wchar_t c, int key)
+{
+    // Обработка русских букв
+    if (iswalpha(c)) {
+        bool is_lower = iswlower(c);
+        wchar_t base = is_lower ? L'а' : L'А';
+        int alphabet_size = 32; 
+
+        int offset = (c - base + key) % alphabet_size;
+        if (offset < 0) offset += alphabet_size;
+
+        wchar_t shifted = base + offset;
+
+        return shifted;
+    }
+    return c;
+}
+
+int main() {
+    int key = 3; 
+    wstring input;
+
+    wcout << L"Введите текст для шифрования: ";
+    getline(wcin, input); // Чтение строк
+
+    wcout << L"Зашифрованный текст: ";
+    for (wchar_t c : input) {
+        wcout << caesar_shift(c, key);
+    }
+    wcout << endl;
+
+    return 0;
+}
