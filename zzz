@@ -1,0 +1,102 @@
+#include <iostream>
+#include <stdexcept>
+using namespace std;
+
+class CharStack 
+{
+private:
+    char* data;       // Динамический массив
+    int capacity;     // Текущая вместимость стека
+    int topIndex;     // Индекс верхнего элемента
+
+    // Увеличение размера массива
+    void resize(int newCapacity) {
+        char* newData = new char[newCapacity];
+        for (int i = 0; i <= topIndex; ++i) {
+            newData[i] = data[i];
+        }
+        delete[] data;
+        data = newData;
+        capacity = newCapacity;
+    }
+
+public:
+    // Конструктор 
+    CharStack(int initialCapacity = 10) : capacity(initialCapacity), topIndex(-1) {
+        if (initialCapacity <= 0) throw invalid_argument("Capacity must be positive");//Емкость должна быть положительной
+        data = new char[capacity];
+    }
+
+    // Деструктор 
+    ~CharStack() {
+        delete[] data;
+    }
+
+    // Добавление символа в стек
+    void push(char c) {
+        if (isFull()) {
+            resize(capacity * 2); 
+        }
+        data[++topIndex] = c;
+    }
+
+    // Удаление и возврат верхнего символа
+    char pop() {
+        if (isEmpty()) {
+            throw out_of_range("Stack is empty");
+        }
+        return data[topIndex--];
+    }
+
+    // Просмотр верхнего символа без удаления
+    char peek() const {
+        if (isEmpty()) {
+            throw out_of_range("Stack is empty");
+        }
+        return data[topIndex];
+    }
+
+    // Количество символов в стеке
+    int size() const {
+        return topIndex + 1;
+    }
+
+    // Проверка на пустоту
+    bool isEmpty() const {
+        return topIndex == -1;
+    }
+
+    // Проверка на полноту
+    bool isFull() const {
+        return topIndex == capacity - 1;
+    }
+
+    // Очистка стека
+    void clear() {
+        topIndex = -1;
+    }
+};
+
+int main() {
+    try {
+        // Тестирование динамического стека
+        CharStack stack(2); 
+
+        stack.push('a');
+        stack.push('b');
+        stack.push('c'); 
+
+        cout << "Верхний элемент: " << stack.peek() << endl; 
+        cout << "Размер стека: " << stack.size() << endl;     
+
+        cout << "Pop: " << stack.pop() << endl; 
+        cout << "Pop: " << stack.pop() << endl; 
+
+        stack.clear();
+        cout << "Стек пуст? " << (stack.isEmpty() ? "Да" : "Нет") << endl; 
+
+    } catch (const exception& e) {
+        cerr << "Ошибка: " << e.what() << endl;
+    }
+    return 0;
+}
