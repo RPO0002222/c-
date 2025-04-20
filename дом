@@ -1,0 +1,163 @@
+#include <iostream>
+using namespace std;
+
+class Student {
+private:
+    char* name;
+    int age;
+public:
+    // Конструктор 
+    Student(const char* n, int a) : age(a) 
+{
+        name = new char[strlen(n) + 1];
+        strcpy(name, n);
+    }
+
+    // Деструктор
+    ~Student() {
+        delete[] name;
+    }
+
+    // Конструктор переноса
+    Student(Student&& other) noexcept {
+        name = other.name; 
+        age = other.age;
+        other.name = nullptr; 
+        other.age = 0;
+    }
+
+    // Оператор присваивания переноса
+    Student& operator=(Student&& other) noexcept 
+{
+        if (this != &other) {
+            delete[] name; 
+            name = other.name;
+            age = other.age;
+            other.name = nullptr;
+            other.age = 0;
+        }
+        return *this;
+    }
+
+    // Метод для вывода информации
+    void print() const {
+        cout << "Имя: " << (name ? name : "N/A") << ", Возраст: " << age << endl;
+    }
+};
+
+int main() {
+    Student s1("Павел", 12);
+    Student s2 = move(s1); 
+
+    s1.print(); 
+    s2.print(); 
+
+    return 0;
+}
+
+
+#include <iostream>
+using namespace std;
+
+// Класс Человек
+class Human 
+{
+private:
+    char* name;
+public:
+    Human(const char* n) {
+        name = new char[strlen(n) + 1];
+        strcpy(name, n);
+    }
+
+    ~Human() {
+        delete[] name;
+    }
+
+    // Конструктор переноса
+    Human(Human&& other) noexcept 
+{
+        name = other.name;
+        other.name = nullptr;
+    }
+
+    // Оператор присваивания переноса
+    Human& operator=(Human&& other) noexcept 
+{
+        if (this != &other) {
+            delete[] name;
+            name = other.name;
+            other.name = nullptr;
+        }
+        return *this;
+    }
+
+    void print() const {
+        cout << "Человек: " << (name ? name : "N/A") << endl;
+    }
+};
+
+// Класс Квартира
+class Apartment {
+private:
+    class Human residents;
+public:
+    // Конструктор переноса
+    Apartment(Apartment&& other) noexcept : residents(move(other.residents));
+
+    // Оператор присваивания переноса
+    Apartment& operator=(Apartment&& other) noexcept {
+        residents = std::move(other.residents);
+        return *this;
+    }
+
+    void addResident(Human&& h) {
+        residents.push_back(move(h));
+    }
+
+    void print() const {
+        std::cout << "Квартира (" << residents.size() << " жильцов):\n";
+        for (const auto& h : residents) {
+            h.print();
+        }
+    }
+};
+
+// Класс Дом
+class House {
+private:
+    class Apartment;
+public:
+    // Конструктор переноса
+    House(House&& other) noexcept : apartments(move(other.apartments));
+
+    // Оператор присваивания переноса
+    House& operator=(House&& other) noexcept {
+        apartments = move(other.apartments);
+        return *this;
+    }
+
+    void addApartment(Apartment&& a) {
+        apartments.push_back(std::move(a));
+    }
+
+    void print() const {
+        cout << "Дом (" << apartments.size() << " квартир):\n";
+        for (const auto& a : apartments) {
+            a.print();
+        }
+    }
+};
+
+int main() {
+    
+    Human h1("Павел");
+    Apartment a1;
+    a1.addResident(move(h1));
+
+    House house;
+    house.addApartment(move(a1));
+    house.print();
+
+    return 0;
+}
