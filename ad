@@ -1,0 +1,143 @@
+#include <iostream>
+#include <vector>
+#include <ctime>
+
+class Matrix {
+private:
+    size_t rows;
+    size_t cols;
+    vector<vector<double>> data;
+
+    void validate_size(const Matrix& other) const {
+        if (rows != other.rows || cols != other.cols)
+            throw std::invalid_argument("Matrix sizes mismatch");
+    }
+
+public:
+    Matrix(size_t r, size_t c) : rows(r), cols(c), data(r, vector<double>(c)) {}
+
+    // Доступ к элементам
+    double& operator()(size_t i, size_t j) {
+        if (i >= rows || j >= cols) throw out_of_range("Index out of range");
+        return data[i][j];
+    }
+
+    const double& operator()(size_t i, size_t j) const {
+        if (i >= rows || j >= cols) throw out_of_range("Index out of range");
+        return data[i][j];
+    }
+
+    // Заполнение одним значением
+    void fill(double value) {
+        for (auto& row : data)
+            fill(row.begin(), row.end(), value);
+    }
+
+    // Заполнение случайными числами
+    void randomize(int min = 0, int max = 100) {
+        srand(time(nullptr));
+        for (auto& row : data)
+            for (auto& elem : row)
+                elem = min + (std::rand() % (max - min + 1));
+    }
+
+    // Сложение матриц
+    Matrix operator+(const Matrix& other) const {
+        validate_size(other);
+        Matrix result(rows, cols);
+        for (size_t i = 0; i < rows; ++i)
+            for (size_t j = 0; j < cols; ++j)
+                result(i, j) = data[i][j] + other(i, j);
+        return result;
+    }
+
+    // Вычитание матриц
+    Matrix operator-(const Matrix& other) const {
+        validate_size(other);
+        Matrix result(rows, cols);
+        for (size_t i = 0; i < rows; ++i)
+            for (size_t j = 0; j < cols; ++j)
+                result(i, j) = data[i][j] - other(i, j);
+        return result;
+    }
+
+    // Умножение на число
+    Matrix operator*(double scalar) const {
+        Matrix result(rows, cols);
+        for (size_t i = 0; i < rows; ++i)
+            for (size_t j = 0; j < cols; ++j)
+                result(i, j) = data[i][j] * scalar;
+        return result;
+    }
+
+    // Умножение матриц
+    Matrix operator*(const Matrix& other) const {
+        if (cols != other.rows)
+            throw invalid_argument("oshibka");
+        
+        Matrix result(rows, other.cols);
+        for (size_t i = 0; i < rows; ++i)
+            for (size_t j = 0; j < other.cols; ++j)
+                for (size_t k = 0; k < cols; ++k)
+                    result(i, j) += data[i][k] * other(k, j);
+        return result;
+    }
+
+    // Транспонирование
+    Matrix transpose() const {
+        Matrix result(cols, rows);
+        for (size_t i = 0; i < rows; ++i)
+            for (size_t j = 0; j < cols; ++j)
+                result(j, i) = data[i][j];
+        return result;
+    }
+
+    // Создание диагональной матрицы
+    static Matrix diagonal(size_t size, double value) {
+        Matrix result(size, size);
+        for (size_t i = 0; i < size; ++i)
+            result(i, i) = value;
+        return result;
+    }
+
+    // Дополнительные методы
+    vector<double>& operator[](size_t i) { return data[i]; }
+    const vector<double>& operator[](size_t i) const { return data[i]; }
+
+    void print() const {
+        for (const auto& row : data) {
+            for (double elem : row)
+                cout << elem << "\t";
+            cout << "\n";
+        }
+    }
+};
+
+int main() {
+    try {
+        Matrix a(2, 2);
+        a.fill(2);
+        Matrix b = Matrix::diagonal(2, 3);
+        
+        std::cout << "Matrix A:\n";
+        a.print();
+        cout << "\nMatrix B:\n";
+        b.print();
+        
+        Matrix c = a + b;
+        cout << "\nA + B:\n";
+        c.print();
+        
+        Matrix d = a * 2.5;
+        cout << "\nA * 2.5:\n";
+        d.print();
+        
+        Matrix e = a * b;
+        cout << "\nA * B:\n";
+        e.print();
+        
+    } catch (const std::exception& e) {
+        cerr << "Error: " << e.what() << endl;
+    }
+    return 0;
+}
