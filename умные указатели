@@ -1,0 +1,81 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+using namespace std;
+
+// Умные указатели
+class Car 
+{
+public:
+    string brand;
+    :string model;
+    int year;
+    
+    Car(const string& b, const string& m, int y)
+        : brand(b), model(m), year(y) {}
+};
+
+void smartPointersDemo() {
+    // unique_ptr
+    unique_ptr<Car> myCar = make_unique<Car>("Toyota", "Camry", 2020);
+    cout << "Unique_ptr: " << myCar->brand << endl;
+
+    // shared_ptr
+    shared_ptr<Car> sharedCar = make_shared<Car>("Honda", "Civic", 2025);
+    shared_ptr<Car> anotherOwner = sharedCar;
+    cout << "Shared_ptr count: " << sharedCar.use_count() << endl;
+
+    // weak_ptr
+    weak_ptr<Car> weakCar = sharedCar;
+    if (auto temp = weakCar.lock()) {
+        cout << "Weak_ptr: " << temp->model << endl;
+    }
+}
+
+// Лямбда-функции
+class Fruit 
+{
+public:
+    string name;
+    double price;
+    double weight;
+    
+    Fruit(const string& n, double p, double w)
+        : name(n), price(p), weight(w) {}
+};
+
+void lambdaDemo() {
+    vector<Fruit> fruits = {
+        {"Apple", 0.99, 150},
+        {"Banana", 1.49, 120},
+        {"Orange", 2.99, 200},
+        {"Pineapple", 4.99, 1000}
+    };
+
+    //  Фрукты дороже $1.00
+    cout << "\nFruits above $1.00:\n";
+    for_each(fruits.begin(), fruits.end(), [](const Fruit& f) {
+        if (f.price > 1.0) cout << f.name << endl;
+    });
+
+    //  Самый тяжелый фрукт
+    auto heaviest = *max_element(fruits.begin(), fruits.end(),
+        [](const Fruit& a, const Fruit& b) { return a.weight < b.weight; });
+    cout << "Heaviest fruit: " << heaviest.name << " (" << heaviest.weight << "g)\n";
+
+    //  Сортировка по цене
+    sort(fruits.begin(), fruits.end(),
+        [](const Fruit& a, const Fruit& b) { return a.price < b.price; });
+    
+    cout << "\nSorted by price:\n";
+    for (const auto& f : fruits) {
+        cout << f.name << " - $" << f.price << endl;
+    }
+}
+
+int main() {
+    smartPointersDemo();
+    lambdaDemo();
+    return 0;
+}
