@@ -1,0 +1,68 @@
+#include <iostream>
+using namespace std;
+
+// 1. Транспортное средство
+class Vehicle {
+protected:
+    int wheels;
+    int maxSpeed;
+public:
+    Vehicle(int w, int s) : wheels(w), maxSpeed(s) {}
+
+    // Виртуальный метод для отображения информации
+    virtual void displayInfo() {
+        cout << "Колес: " << wheels 
+             << "\nМакс. скорость: " << maxSpeed << " км/ч" << endl;
+    }
+};
+
+// 2. Автомобиль
+class Car : public Vehicle {
+    string brand;
+public:
+    Car(string b, int s) : Vehicle(4, s), brand(b);
+
+    void displayInfo() override {
+        cout << "Автомобиль: " << brand << "\n";
+        Vehicle::displayInfo(); 
+    }
+};
+
+// 3. Доп
+class Bicycle : public Vehicle {
+public:
+    Bicycle(int s) : Vehicle(2, s) {} 
+
+    void displayInfo() override {
+        cout << "Велосипед\n";
+    }
+};
+
+class Truck : public Vehicle {
+    int loadCapacity;
+public:
+    Truck(int s, int lc) : Vehicle(8, s), loadCapacity(lc) {}
+
+    void displayInfo() override {
+        cout << "Грузовик\n";
+        cout << "Грузоподъемность: " << loadCapacity << " тонн" << endl;
+    }
+};
+
+int main() {
+    // 3. Создание объектов производных классов
+    Car toyota("Toyota Camry", 220);
+    Bicycle stels(30);
+    Truck man(90, 20);
+
+    // 4. Полиморфизм
+    Vehicle* vehicles[] = {&toyota, &stels, &man};
+
+    cout << "Самая классная машина\n";
+    for (Vehicle* v : vehicles) 
+{
+        v->displayInfo();
+    }
+
+    return 0;
+}
