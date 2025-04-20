@@ -1,0 +1,66 @@
+#include <iostream>
+using namespace std;
+
+void print_help() 
+{
+    cout << "Доступные команды:\n"
+         << "  cd <путь>      - Сменить каталог (не реализовано)\n"
+         << "  ls             - Показать файлы и подкаталоги (не реализовано)\n"
+         << "  mkdir <имя>    - Создать каталог (не реализовано)\n"
+         << "  rmdir <имя>    - Удалить каталог (не реализовано)\n"
+         << "  exit           - Выход\n";
+}
+int main() 
+{
+    string input;
+    string cmd;
+    string arg;
+
+    cout << "Простой файловый менеджер\n";
+    print_help();
+
+    while (true) 
+{
+        cout << "\nТекущий каталог: [Пример пути]" << endl;
+        cout << "> ";
+        getline(cin, input);
+
+        size_t space_pos = input.find(' ');
+        if (space_pos != string::npos) {
+            cmd = input.substr(0, space_pos);
+            arg = input.substr(space_pos + 1);
+        } else {
+            cmd = input;
+            arg.clear();
+        }
+
+        if (cmd == "exit") {
+            break;
+        }
+        else if (cmd == "cd") {
+            cerr << "Команда 'cd' не реализована\n";
+        }
+        else if (cmd == "ls") {
+            cerr << "Команда 'ls' не реализована\n";
+        }
+        else if (cmd == "mkdir") {
+            if (arg.empty()) {
+                cerr << "Укажите имя каталога\n";
+                continue;
+            }
+            cout << "Создание каталога '" << arg << "' (не реализовано)\n";
+        }
+        else if (cmd == "rmdir") {
+            if (arg.empty()) {
+                cerr << "Укажите имя каталога\n";
+                continue;
+            }
+            cout << "Удаление каталога '" << arg << "' (не реализовано)\n";
+        }
+        else {
+            cerr << "Неизвестная команда\n";
+            print_help();
+        }
+    }
+    return 0;
+}
