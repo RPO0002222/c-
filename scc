@@ -1,0 +1,86 @@
+#include <iostream>
+#include <thread>
+using namespace std;
+
+void printNumbers() {
+    for (int i = 1; i <= 100; ++i) {
+        cout << i << " ";
+    }
+}
+
+void printLetters() {
+    for (char c = 'A'; c <= 'Z'; ++c) {
+        cout << c << " ";
+    }
+}
+
+int main() {
+    // Создание потоков
+    thread thread1(printNumbers);
+    thread thread2(printLetters);
+
+    // Ожидание завершения потоков
+    thread1.join();
+    thread2.join();
+
+    cout << "\n Оба потока завершили работу!" << endl;
+    return 0;
+}
+
+#include <iostream>
+#include <vector>
+#include <mutex>
+using namespace std;
+
+vector<int> sharedArray;
+mutex mtx;
+
+void addElements() {
+    for (int i = 1; i <= 5; ++i) {
+        mtx.lock();
+        sharedArray.push_back(i);
+        cout << "Добавлен элемент: " << i << endl;
+        mtx.unlock();
+    }
+}
+
+void removeElements() {
+    while (!sharedArray.empty()) {
+        mtx.lock();
+        int value = sharedArray.back();
+        sharedArray.pop_back();
+        cout << "Удален элемент: " << value << endl;
+        mtx.unlock();
+    }
+}
+
+int main() {
+    addElements(); 
+    removeElements(); 
+
+    cout << "Программа завершена." << endl;
+    return 0;
+}
+
+#include <iostream>
+#include <mutex>
+using namespace std;
+
+mutex mtx;
+
+void workerFunction() {
+    lock_guard<mutex> lock(mtx);
+    cout << "Рабочий поток: выполняется!" << endl;
+}
+
+int main() {
+    {
+        lock_guard<std::mutex> lock(mtx);
+        cout << "Главный поток: выполняется!" << endl;
+    }
+
+    workerFunction(); 
+    cout << "Главный поток завершен." << endl;
+    return 0;
+}
+
