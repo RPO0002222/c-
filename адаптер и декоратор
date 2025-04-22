@@ -1,0 +1,105 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Адаптер 
+// Старый класс
+class LegacyRectangle {
+    double width, height;
+public:
+    void setWidth(double w) { width = w; }
+    void setHeight(double h) { height = h; }
+    double getArea() const { return width * height; }
+    void draw() const {
+        cout << "LegacyRectangle drawn. Area: " << getArea() << endl;
+    }
+};
+
+// Новый интерфейс
+class ModernShape {
+public:
+    virtual void resize(double w, double h) = 0;
+    virtual void render() const = 0;
+    virtual ~ModernShape() = default;
+};
+
+// Адаптер
+class LegacyRectangleAdapter : public ModernShape {
+    LegacyRectangle legacyRect;
+public:
+    void resize(double w, double h) override {
+        legacyRect.setWidth(w);
+        legacyRect.setHeight(h);
+    }
+    void render() const override {
+        legacyRect.draw();
+    }
+};
+
+// Декоратор
+// Базовый интерфейс
+class Widget {
+public:
+    virtual void display() const = 0;
+    virtual ~Widget() = default;
+};
+
+// Конкретный виджет
+class BaseWidget : public Widget {
+public:
+    void display() const override {
+        cout << "Base widget displayed" << endl;
+    }
+};
+
+// Базовый декоратор
+class WidgetDecorator : public Widget {
+protected:
+    Widget* widget;
+public:
+    explicit WidgetDecorator(Widget* w) : widget(w) {}
+    ~WidgetDecorator() { delete widget; }
+};
+
+// Конкретные декораторы
+class BackgroundColorDecorator : public WidgetDecorator {
+    string color;
+public:
+    BackgroundColorDecorator(Widget* w, const string& c) 
+        : WidgetDecorator(w), color(c) {}
+    
+    void display() const override {
+        widget->display();
+       cout << " + Background color: " << color << endl;
+    }
+};
+
+class FontDecorator : public WidgetDecorator {
+    string font;
+public:
+    FontDecorator(Widget* w, const string& f) 
+        : WidgetDecorator(w), font(f) {}
+    
+    void display() const override {
+        widget->display();
+        cout << " + Font: " << font << endl;
+    }
+};
+
+int main() {
+    // Адаптер
+    ModernShape* shape = new LegacyRectangleAdapter();
+    shape->resize(5, 3);
+    shape->render();
+    delete shape;
+
+    // Декоратор
+    Widget* widget = new FontDecorator(
+                        new BackgroundColorDecorator(
+                            new BaseWidget(), "blue"), 
+                        "Arial");
+    widget->display();
+    delete widget;
+
+    return 0;
+}
