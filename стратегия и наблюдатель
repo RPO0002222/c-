@@ -1,0 +1,148 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+// Стратегия 
+// Абстрактная стратегия
+class DeliveryStrategy {
+public:
+    virtual double calculateCost() const = 0;
+    virtual ~DeliveryStrategy() = default;
+};
+
+// Фиксированная ставка
+class FlatRateDelivery : public DeliveryStrategy {
+public:
+    double calculateCost() const override {
+        return 50.0; 
+    }
+};
+
+// По весу
+class WeightBasedDelivery : public DeliveryStrategy {
+    double weight;
+public:
+    explicit WeightBasedDelivery(double w) : weight(w) {}
+    double calculateCost() const override {
+        return weight * 10.0; 
+    }
+};
+
+// По расстоянию
+class DistanceBasedDelivery : public DeliveryStrategy {
+    double distance;
+public:
+    explicit DistanceBasedDelivery(double d) : distance(d) {}
+    double calculateCost() const override {
+        return distance * 5.0; 
+    }
+};
+
+// Класс заказа
+class Order {
+    unique_ptr<DeliveryStrategy> strategy;
+public:
+    void setStrategy(DeliveryStrategy* s) {
+        strategy.reset(s);
+    }
+    double calculateTotal() const {
+        return strategy ? strategy->calculateCost() : 0.0;
+    }
+};
+
+// Наблюдатель 
+// Интерфейс наблюдателя
+class Observer {
+public:
+    virtual void update(const string& message) = 0;
+    virtual ~Observer() = default;
+};
+
+// Субъект погодные данные
+class WeatherSubject {
+    vector<Observer*> observers;
+public:
+    void addObserver(Observer* o) {
+        observers.push_back(o);
+    }
+    void removeObserver(Observer* o) {
+        observers.erase(remove(observers.begin(), observers.end(), o), observers.end());
+    }
+    void notifyObservers(const string& message) {
+        for (auto& o : observers) {
+            o->update(message);
+        }
+    }
+};
+
+// Конкретный субъект
+class WeatherData : public WeatherSubject {
+    double temperature, pressure, humidity;
+public:
+    void setMeasurements(double t, double p, double h) {
+        temperature = t;
+        pressure = p;
+        humidity = h;
+        notifyObservers("Погода изменилась!");
+    }
+};
+
+// Конкретные наблюдатели
+class SMSNotification : public Observer {
+public:
+    void update(const string& message) override {
+        cout << "SMS: \"" << message << "\"\n";
+    }
+};
+
+class EmailNotification : public Observer {
+public:
+    void update(const string& message) override {
+        cout << "Email: \"" << message << " Новая информация о погоде\"\n";
+    }
+};
+
+int main() {
+    // Стратегия
+    Order order;
+    int choice;
+    cout << "Выберите способ расчета:\n1. Фиксированная ставка\n2. По весу\n3. По расстоянию\n";
+    cin >> choice;
+
+    switch(choice) {
+        case 1:
+            order.setStrategy(new FlatRateDelivery());
+            break;
+        case 2: {
+            double weight;
+            cout << "Введите вес (кг): ";
+            cin >> weight;
+            order.setStrategy(new WeightBasedDelivery(weight));
+            break;
+        }
+        case 3: {
+            double distance;
+            cout << "Введите расстояние (км): ";
+            cin >> distance;
+            order.setStrategy(new DistanceBasedDelivery(distance));
+            break;
+        }
+        default:
+            cout << "Неверный выбор!\n";
+            return 1;
+    }
+
+    cout << "Стоимость доставки: " << order.calculateTotal() << " руб\n\n";
+
+    // Наблюдатель
+    WeatherData weatherStation;
+    SMSNotification sms;
+    EmailNotification email;
+
+    weatherStation.addObserver(&sms);
+    weatherStation.addObserver(&email);
+
+    weatherStation.setMeasurements(20.0, 700.0, 70.0);
+
+    return 0;
+}
