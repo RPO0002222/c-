@@ -1,0 +1,66 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Класс фигуры
+class Shape {
+public:
+    virtual double getArea() const = 0;
+    virtual double getPerimeter() const = 0;
+    virtual ~Shape() = default;
+};
+
+// Класс круга
+class Circle : public Shape {
+    double radius;
+public:
+    explicit Circle(double r) : radius(r) {}
+    double getArea() const override {
+        return 3.14159 * radius * radius;
+    }
+    double getPerimeter() const override {
+        return 2 * 3.14159 * radius;
+    }
+};
+
+// Класс квадрата
+class Square : public Shape {
+    double side;
+public:
+    explicit Square(double s) : side(s) {}
+    double getArea() const override {
+        return side * side;
+    }
+    double getPerimeter() const override {
+        return 4 * side;
+    }
+};
+
+// Фабрика объектов
+class ShapeFactory {
+public:
+    static Shape* createShape(const std::string& type, double param) {
+        if (type == "Circle") {
+            return new Circle(param);
+        } else if (type == "Square") {
+            return new Square(param);
+        }
+        return nullptr;
+    }
+};
+
+int main() {
+    Shape* shapes[] = {
+        ShapeFactory::createShape("Circle", 5.0),
+        ShapeFactory::createShape("Square", 4.0)
+    };
+
+    for (Shape* shape : shapes) {
+        if (shape) {
+            cout << "Area: " << shape->getArea() 
+                      << ", Perimeter: " << shape->getPerimeter() << endl;
+            delete shape;
+        }
+    }
+    return 0;
+}
