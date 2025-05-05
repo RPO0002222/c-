@@ -1,0 +1,173 @@
+//1
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Введите число от 1 до 100: ");
+        int number = int.Parse(Console.ReadLine());
+        
+        if (number < 1 || number > 100)
+        {
+            Console.WriteLine("Ошибка: число вне диапазона.");
+            return;
+        }
+        
+        string result = "";
+        if (number % 3 == 0) result += "Fizz";
+        if (number % 5 == 0) result += "Buzz";
+        Console.WriteLine(result == "" ? number.ToString() : result);
+    }
+}
+
+//2
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Введите значение: ");
+        double value = double.Parse(Console.ReadLine());
+        Console.Write("Введите процент: ");
+        double percent = double.Parse(Console.ReadLine());
+        
+        double result = value * percent / 100;
+        Console.WriteLine($"Результат: {result}");
+    }
+}
+
+//3
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Введите четыре цифры подряд: ");
+        string input = Console.ReadLine();
+        
+        if (input.Length != 4 || !int.TryParse(input, out int number))
+        {
+            Console.WriteLine("Ошибка: введите ровно четыре цифры.");
+            return;
+        }
+        
+        Console.WriteLine($"Сформированное число: {number}");
+    }
+}
+
+//4
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Введите шестизначное число: ");
+        string input = Console.ReadLine();
+        
+        if (input.Length != 6 || !int.TryParse(input, out int number))
+        {
+            Console.WriteLine("Ошибка: введите шестизначное число.");
+            return;
+        }
+        
+        Console.Write("Введите две позиции (1-6) через пробел: ");
+        string[] positions = Console.ReadLine().Split();
+        int pos1 = int.Parse(positions[0]) - 1; // Переводим в индексы 0-5
+        int pos2 = int.Parse(positions[1]) - 1;
+        
+        if (pos1 < 0 || pos1 > 5 || pos2 < 0 || pos2 > 5)
+        {
+            Console.WriteLine("Ошибка: позиции должны быть от 1 до 6.");
+            return;
+        }
+        
+        char[] digits = input.ToCharArray();
+        (digits[pos2], digits[pos1]) = (digits[pos1], digits[pos2]); // Обмен
+        Console.WriteLine($"Результат: {new string(digits)}");
+    }
+}
+
+//5
+using System;
+using System.Globalization;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Введите дату (дд.ММ.гггг): ");
+        if (!DateTime.TryParseExact(Console.ReadLine(), "dd.MM.yyyy", 
+            CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))
+        {
+            Console.WriteLine("Ошибка: некорректная дата.");
+            return;
+        }
+        
+        // Определение сезона
+        string season = date.Month switch
+        {
+            12 or 1 or 2 => "Winter",
+            3 or 4 or 5 => "Spring",
+            6 or 7 or 8 => "Summer",
+            9 or 10 or 11 => "Autumn",
+            _ => ""
+        };
+        
+        // День недели на английском
+        string day = date.ToString("dddd", new CultureInfo("en-US"));
+        Console.WriteLine($"{season} {day}");
+    }
+}
+
+//6
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Введите температуру: ");
+        double temp = double.Parse(Console.ReadLine());
+        
+        Console.Write("Куда конвертировать? (1 - C→F, 2 - F→C): ");
+        int choice = int.Parse(Console.ReadLine());
+        
+        double result = choice switch
+        {
+            1 => temp * 9 / 5 + 32,
+            2 => (temp - 32) * 5 / 9,
+            _ => throw new ArgumentException("Некорректный выбор.")
+        };
+        
+        Console.WriteLine($"Результат: {result:F2}");
+    }
+}
+
+//7
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Введите два числа через пробел: ");
+        string[] input = Console.ReadLine().Split();
+        int a = int.Parse(input[0]);
+        int b = int.Parse(input[1]);
+        
+        int min = Math.Min(a, b);
+        int max = Math.Max(a, b);
+        
+        Console.WriteLine("Четные числа в диапазоне:");
+        for (int i = min; i <= max; i++)
+        {
+            if (i % 2 == 0) Console.Write(i + " ");
+        }
+    }
+}
+
+
