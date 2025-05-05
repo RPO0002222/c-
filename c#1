@@ -1,0 +1,59 @@
+//1
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Введите A: ");
+        int A = int.Parse(Console.ReadLine());
+        Console.Write("Введите B: ");
+        int B = int.Parse(Console.ReadLine());
+        Console.Write("Введите C: ");
+        int C = int.Parse(Console.ReadLine());
+
+        if (C > A || C > B || C <= 0)
+        {
+            Console.WriteLine("Ошибка: квадраты нельзя разместить.");
+            return;
+        }
+
+        int countHorizontal = A / C;
+        int countVertical = B / C;
+        int totalSquares = countHorizontal * countVertical;
+
+        int areaRectangle = A * B;
+        int areaSquares = totalSquares * C * C;
+        int remainingArea = areaRectangle - areaSquares;
+
+        Console.WriteLine($"Квадратов: {totalSquares}, Незанятая площадь: {remainingArea}");
+    }
+}
+//2
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Введите процент P (0 < P < 25): ");
+        double P = double.Parse(Console.ReadLine());
+
+        if (P <= 0 || P >= 25)
+        {
+            Console.WriteLine("Ошибка: некорректный процент.");
+            return;
+        }
+
+        double S = 10000;
+        int K = 0;
+
+        while (S <= 11000)
+        {
+            S += S * P / 100;
+            K++;
+        }
+
+        Console.WriteLine($"Месяцев: {K}, Итоговый вклад: {S:F2} руб.");
+    }
+}
