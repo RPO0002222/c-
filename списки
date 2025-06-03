@@ -1,0 +1,218 @@
+using System;
+class CaesarCipher
+{
+    //Поля для хранения текста и сдвига
+    private string text;
+    private int shift;
+
+    //Конструктор — вызывается при создании объекта
+    public CaesarCipher(string input, int s)
+    {
+        text = input;
+        shift = s;
+    }
+
+    //шифрования
+    public string Encrypt()
+    {
+        string result = "";
+
+        foreach (char c in text)
+        {
+            if (char.IsLetter(c))
+            {
+                char offset = char.IsUpper(c) ? 'A' : 'a';
+                char shifted = (char)((((c - offset) + shift) % 26 + 26) % 26 + offset);
+                result += shifted;
+            }
+            else
+            {
+                result += c;
+            }
+        }
+
+        return result;
+    }
+
+    //Метод расшифровки
+    public string Decrypt()
+    {
+        string result = "";
+
+        foreach (char c in text)
+        {
+            if (char.IsLetter(c))
+            {
+                char offset = char.IsUpper(c) ? 'A' : 'a';
+                char shifted = (char)((((c - offset) - shift) % 26 + 26) % 26 + offset);
+                result += shifted;
+            }
+            else
+            {
+                result += c;
+            }
+        }
+
+        return result;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        //Ввод строки и сдвига
+        Console.Write("Введите строку для шифрования: ");
+        string input = Console.ReadLine();
+
+        Console.Write("Введите сдвиг (число): ");
+        int shift = Convert.ToInt32(Console.ReadLine());
+
+        //Создаём объект шифра
+        CaesarCipher cipher = new CaesarCipher(input, shift);
+
+        //Шифруем и показываем результат
+        string encrypted = cipher.Encrypt();
+        Console.WriteLine("Зашифрованная строка: " + encrypted);
+
+        //Меняем текст в объекте, чтобы расшифровать
+        CaesarCipher decoder = new CaesarCipher(encrypted, shift);
+        string decrypted = decoder.Decrypt();
+        Console.WriteLine("Расшифрованная строка: " + decrypted);
+    }
+}
+
+
+
+using System;
+class Matrix
+{
+    private int[,] data;
+    private int rows;
+    private int cols;
+
+    //Конструктор для создания пустой матрицы
+    public Matrix(int r, int c)
+    {
+        rows = r;
+        cols = c;
+        data = new int[rows, cols];
+    }
+
+    //Метод для ввода матрицы с клавиатуры
+    public void Input()
+    {
+        Console.WriteLine("Введите элементы матрицы:");
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                Console.Write($"[{i},{j}]: ");
+                data[i, j] = Convert.ToInt32(Console.ReadLine());
+            }
+        }
+    }
+
+    //Метод для вывода матрицы
+    public void Print()
+    {
+        Console.WriteLine("Матрица:");
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                Console.Write(data[i, j] + "\t");
+            }
+            Console.WriteLine();
+        }
+    }
+
+    //Умножение матрицы на число
+    public Matrix MultiplyByNumber(int number)
+    {
+        Matrix result = new Matrix(rows, cols);
+
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < cols; j++)
+                result.data[i, j] = data[i, j] * number;
+
+        return result;
+    }
+
+    //Сложение матриц
+    public Matrix Add(Matrix other)
+    {
+        if (rows != other.rows || cols != other.cols)
+        {
+            Console.WriteLine("Матрицы должны быть одного размера для сложения.");
+            return null;
+        }
+
+        Matrix result = new Matrix(rows, cols);
+
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < cols; j++)
+                result.data[i, j] = data[i, j] + other.data[i, j];
+
+        return result;
+    }
+
+    //Умножение двух матриц
+    public Matrix Multiply(Matrix other)
+    {
+        if (cols != other.rows)
+        {
+            Console.WriteLine("Количество столбцов первой матрицы должно совпадать с количеством строк второй.");
+            return null;
+        }
+
+        Matrix result = new Matrix(rows, other.cols);
+
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < other.cols; j++)
+                for (int k = 0; k < cols; k++)
+                    result.data[i, j] += data[i, k] * other.data[k, j];
+
+        return result;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        //Создаём первую матрицу
+        Console.WriteLine("Первая матрица:");
+        Matrix m1 = new Matrix(2, 2);
+        m1.Input();
+
+        //Создаём вторую матрицу
+        Console.WriteLine("Вторая матрица:");
+        Matrix m2 = new Matrix(2, 2);
+        m2.Input();
+
+        //Умножение на число
+        Console.Write("Введите число для умножения: ");
+        int num = Convert.ToInt32(Console.ReadLine());
+        Matrix m1TimesNum = m1.MultiplyByNumber(num);
+        Console.WriteLine("Первая матрица умноженная на число:");
+        m1TimesNum.Print();
+
+        //Сложение матриц
+        Matrix sum = m1.Add(m2);
+        if (sum != null)
+        {
+            Console.WriteLine("Сума двух матриц:");
+            sum.Print();
+        }
+
+        //Умножение матриц
+        Matrix product = m1.Multiply(m2);
+        if (product != null)
+        {
+            Console.WriteLine("Произведение двух матриц:");
+            product.Print();
+        }
+    }
+}
+
