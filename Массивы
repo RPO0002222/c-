@@ -1,0 +1,186 @@
+using System;
+class Program
+{
+    static void Main()
+    {
+        double[] A = new double[5];
+        double[,] B = new double[3, 4];
+
+        //Пользователь вводит 5 чисел с клавиатуры для массива A
+        Console.WriteLine("Введите 5 чисел для массива A:");
+        for (int i = 0; i < 5; i++)
+        {
+            Console.Write("Введите число: ");
+            A[i] = Convert.ToDouble(Console.ReadLine()); 
+        }
+
+        //Заполняем массив B случайными числами от 0 до 9
+        Random rnd = new Random(); //создаём генератор случайных чисел
+        for (int i = 0; i < 3; i++) 
+        {
+            for (int j = 0; j < 4; j++) 
+            {
+                B[i, j] = rnd.Next(0, 10); 
+            }
+        }
+
+        //Выводим массив A
+        Console.WriteLine("Массив A:");
+        for (int i = 0; i < 5; i++)
+        {
+            Console.Write(A[i] + " ");
+        }
+
+        //Переход на новую строку
+        Console.WriteLine();
+
+        //Выводим массив B в виде таблицы
+        Console.WriteLine("Массив B:");
+        for (int i = 0; i < 3; i++) 
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                Console.Write(B[i, j] + "\t"); 
+            }
+            Console.WriteLine();
+        }
+
+        //Ищем максимальный и минимальный элементы среди всех
+        double max = A[0];
+        double min = A[0];
+
+        //Проверяем элементы массива A
+        for (int i = 0; i < 5; i++)
+        {
+            if (A[i] > max) max = A[i];
+            if (A[i] < min) min = A[i];
+        }
+
+        //Проверяем элементы массива B
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                if (B[i, j] > max) max = B[i, j];
+                if (B[i, j] < min) min = B[i, j];
+            }
+        }
+
+        // Считаем сумму всех элементов
+        double sum = 0;
+        for (int i = 0; i < 5; i++) sum += A[i];
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 4; j++)
+                sum += B[i, j];
+
+        //Считаем произведение всех элементов
+        double product = 1;
+        for (int i = 0; i < 5; i++) product *= A[i];
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 4; j++)
+                product *= B[i, j];
+
+        //Сумма четных элементов массива A
+        double sumEvenA = 0;
+        for (int i = 0; i < 5; i++)
+        {
+            if ((int)A[i] % 2 == 0) sumEvenA += A[i];
+        }
+
+        //Сумма элементов в нечетных столбцах массива B (0 и 2)
+        double sumOddColsB = 0;
+        for (int j = 0; j < 4; j++)
+        {
+            if (j % 2 == 0)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    sumOddColsB += B[i, j];
+                }
+            }
+        }
+
+        //Выводим результаты
+        Console.WriteLine("Максимум: " + max);
+        Console.WriteLine("Минимум: " + min);
+        Console.WriteLine("Сумма всех: " + sum);
+        Console.WriteLine("Произведение всех: " + product);
+        Console.WriteLine("Сумма четных A: " + sumEvenA);
+        Console.WriteLine("Сумма нечетных столбцов B: " + sumOddColsB);
+    }
+}
+
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        //Создаём массив 5 на 5
+        int[,] array = new int[5, 5];
+
+        Random rnd = new Random();
+
+        for (int i = 0; i < 5; i++) // по строкам
+        {
+            for (int j = 0; j < 5; j++) // по столбцам
+            {
+                array[i, j] = rnd.Next(-100, 101);
+            }
+        }
+
+        //Показываем массив
+        Console.WriteLine("Массив:");
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                Console.Write(array[i, j] + "\t");
+            }
+            Console.WriteLine();
+        }
+
+        //Находим минимальный и максимальный элементы и их позиции
+        int min = array[0, 0], max = array[0, 0];
+        int minIndex = 0, maxIndex = 0;
+
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                int index = i * 5 + j; // считаем индекс в одной строке (от 0 до 24)
+
+                if (array[i, j] < min)
+                {
+                    min = array[i, j];
+                    minIndex = index;
+                }
+                if (array[i, j] > max)
+                {
+                    max = array[i, j];
+                    maxIndex = index;
+                }
+            }
+        }
+
+        //Считаем сумму элементов между min и max 
+        int start = Math.Min(minIndex, maxIndex);
+        int end = Math.Max(minIndex, maxIndex);
+        int sum = 0;
+
+        for (int i = start + 1; i < end; i++)
+        {
+            int row = i / 5;
+            int col = i % 5;
+            sum += array[row, col];
+        }
+
+        //Показываем результат
+        Console.WriteLine("Минимум: " + min);
+        Console.WriteLine("Максимум: " + max);
+        Console.WriteLine("Сумма между ними: " + sum);
+    }
+}
+
+
+
