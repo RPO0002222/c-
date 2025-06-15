@@ -1,0 +1,130 @@
+import pygame
+import random
+import math
+
+# Инициализация Pygame 
+pygame.init()
+
+# Константы и настройки 
+# Экран
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Поймай точку!")
+
+# Цвета
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 69, 0)      # Цвет точки
+BLUE = (30, 144, 255)   # Цвет фона
+GRAY = (100, 100, 100)  # Цвет текста для подсказок
+
+# Игровые параметры
+FPS = 60
+GAME_DURATION = 30  # Длительность игры в секундах
+STARTING_RADIUS = 40
+MIN_RADIUS = 5
+RADIUS_REDUCTION = 0.98 # Коэффициент уменьшения радиуса (98%)
+
+# Шрифты
+title_font = pygame.font.Font(None, 80)
+ui_font = pygame.font.Font(None, 40)
+hint_font = pygame.font.Font(None, 30)
+
+# Вспомогательные функции 
+def draw_text(text, font, color, surface, x, y):
+    """Отрисовывает текст с центром в точке (x, y)."""
+    text_obj = font.render(text, True, color)
+    text_rect = text_obj.get_rect(center=(x, y))
+    surface.blit(text_obj, text_rect)
+
+def spawn_dot():
+    """Возвращает случайные координаты для новой точки."""
+    # Отступы, чтобы точка не появлялась за краями экрана
+    margin = int(dot['radius'])
+    x = random.randint(margin, WIDTH - margin)
+    y = random.randint(margin, HEIGHT - margin)
+    return x, y
+
+# Основные переменные игры 
+clock = pygame.time.Clock()
+
+# Словарь для хранения свойств точки
+dot = {
+    'radius': STARTING_RADIUS,
+    'x': WIDTH // 2,
+    'y': HEIGHT // 2
+}
+dot['x'], dot['y'] = spawn_dot() # Начальная позиция
+
+score = 0
+game_state = 'start'  # Состояния: 'start', 'playing', 'game_over'
+start_time = 0
+
+# Главный цикл игры 
+running = True
+while running:
+    # Обработка событий
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        
+        # Обработка кликов мыши
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if game_state == 'start':
+                # Начинаем игру
+                game_state = 'playing'
+                score = 0
+                dot['radius'] = STARTING_RADIUS
+                dot['x'], dot['y'] = spawn_dot()
+                start_time = pygame.time.get_ticks()
+            
+            elif game_state == 'playing':
+                mouse_x, mouse_y = event.pos
+                # Вычисляем расстояние от клика до центра точки
+                distance = math.sqrt((mouse_x - dot['x'])**2 + (mouse_y - dot['y'])**2)
+                
+                if distance < dot['radius']:
+                    # Попадание!
+                    score += 1
+                    # Уменьшаем радиус, но не меньше минимального
+                    dot['radius'] = max(MIN_RADIUS, dot['radius'] * RADIUS_REDUCTION)
+                    # Создаем новую точку
+                    dot['x'], dot['y'] = spawn_dot()
+            
+            elif game_state == 'game_over':
+                # Перезапускаем игру, возвращаясь на стартовый экран
+                game_state = 'start'
+
+    # Логика и отрисовка в зависимости от состояния игры 
+    screen.fill(BLUE)
+
+    if game_state == 'start':
+        draw_text("Поймай точку!", title_font, WHITE, screen, WIDTH // 2, HEIGHT // 3)
+        draw_text("Кликни, чтобы начать", ui_font, WHITE, screen, WIDTH // 2, HEIGHT // 2)
+    
+    elif game_state == 'playing':
+        # Логика таймера
+        elapsed_time = (pygame.time.get_ticks() - start_time) / 1000 # в секундах
+        time_left = max(0, GAME_DURATION - elapsed_time)
+        
+        if time_left == 0:
+            game_state = 'game_over'
+
+        # Отрисовка игровых элементов
+        pygame.draw.circle(screen, RED, (dot['x'], dot['y']), int(dot['radius']))
+        draw_text(f"Счет: {score}", ui_font, WHITE, screen, 80, 30)
+        draw_text(f"Время: {int(time_left)}", ui_font, WHITE, screen, WIDTH - 100, 30)
+
+    elif game_state == 'game_over':
+        draw_text("Игра окончена!", title_font, WHITE, screen, WIDTH // 2, HEIGHT // 3)
+        draw_text(f"Ваш итоговый счет: {score}", ui_font, WHITE, screen, WIDTH // 2, HEIGHT // 2)
+        draw_text("Кликни, чтобы сыграть снова", hint_font, GRAY, screen, WIDTH // 2, HEIGHT * 0.6)
+
+    # Обновление экрана
+    pygame.display.flip()
+    
+    # Контроль частоты кадров
+    clock.tick(FPS)
+
+# Завершение работы 
+pygame.quit()
