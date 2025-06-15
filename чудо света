@@ -1,0 +1,141 @@
+import pygame
+from random import shuffle
+
+#  Класс для хранения данных вопроса 
+class Question:
+    def __init__(self, question_text, options, correct_answer_index):
+        question_text: Текст вопроса (строка)
+        options: Список вариантов ответа (список строк)
+        correct_answer_index: Индекс правильного ответа в списке options (число)
+        self.question = question_text
+        self.options = options
+        self.correct_answer = correct_answer_index
+
+# Данные для теста (вы можете легко заменить их своими) 
+questions_data = [
+    ("Какая планета является самой большой в Солнечной системе?",
+     ["Земля", "Юпитер", "Марс", "Сатурн"], 1),
+    ("Как называется галактика, в которой мы живем?",
+     ["Андромеда", "Треугольника", "Млечный Путь"], 2),
+    ("Что такое 'Черная дыра'?",
+     ["Сверхновая звезда", "Область с огромной гравитацией", "Тип астероида"], 1),
+    ("Какая планета известна своими кольцами?",
+     ["Нептун", "Уран", "Сатурн"], 2),
+    ("Кто был первым человеком, полетевшим в космос?",
+     ["Нил Армстронг", "Юрий Гагарин", "Герман Титов"], 1)
+]
+
+# Преобразование данных в объекты класса Question
+questions = []
+for q_data in questions_data:
+    questions.append(Question(q_data[0], q_data[1], q_data[2]))
+
+# Перемешиваем вопросы для разнообразия
+shuffle(questions)
+
+# Настройки и константы 
+pygame.init()
+
+WIDTH, HEIGHT = 800, 600
+FPS = 60
+
+# Цвета
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GRAY = (200, 200, 200)
+LIGHT_GRAY = (220, 220, 220)
+GREEN = (50, 205, 50)
+RED = (220, 20, 60)
+
+# Настройка экрана и шрифтов
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Тест на тему 'Космос'")
+clock = pygame.time.Clock()
+question_font = pygame.font.Font(None, 38) # Шрифт для вопроса
+options_font = pygame.font.Font(None, 32)  # Шрифт для вариантов ответа
+result_font = pygame.font.Font(None, 60)   # Шрифт для итогового результата
+
+# Вспомогательные функции 
+def draw_text(text, font, color, surface, x, y, is_center=True):
+    """Универсальная функция для отрисовки текста."""
+    text_obj = font.render(text, True, color)
+    text_rect = text_obj.get_rect()
+    if is_center:
+        text_rect.center = (x, y)
+    else:
+        text_rect.topleft = (x, y)
+    surface.blit(text_obj, text_rect)
+
+# Основные переменные игры 
+score = 0
+current_question_idx = 0
+game_state = "playing"  # Два состояния: 'playing' и 'results'
+answer_buttons = [] # Список для хранения прямоугольников кнопок
+
+# Главный цикл игры 
+running = True
+while running:
+    # Обработка событий
+    mouse_pos = pygame.mouse.get_pos()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+        # Обработка кликов мыши
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if game_state == "playing":
+                for i, button_rect in enumerate(answer_buttons):
+                    if button_rect.collidepoint(mouse_pos):
+                        # Проверяем, правильный ли ответ
+                        if i == questions[current_question_idx].correct_answer:
+                            score += 1
+                        
+                        # Переходим к следующему вопросу
+                        current_question_idx += 1
+                        if current_question_idx >= len(questions):
+                            game_state = "results"
+                        break # Выходим из цикла for, т.к. кнопка уже нажата
+
+        # Выход из экрана результатов по нажатию любой клавиши
+        if event.type == pygame.KEYDOWN and game_state == "results":
+            running = False
+
+
+    # Отрисовка в зависимости от состояния игры
+    screen.fill((30, 30, 50)) # Темно-синий фон, как космос
+
+    if game_state == "playing":
+        # Получаем текущий вопрос
+        current_question = questions[current_question_idx]
+        
+        # Рисуем текст вопроса
+        draw_text(current_question.question, question_font, WHITE, screen, WIDTH // 2, HEIGHT // 4)
+
+        # Очищаем список кнопок для нового вопроса
+        answer_buttons.clear()
+
+        # Рисуем кнопки с вариантами ответов
+        button_y_start = HEIGHT // 2 - 50
+        for i, option in enumerate(current_question.options):
+            button_rect = pygame.Rect(WIDTH // 2 - 200, button_y_start + i * 70, 400, 50)
+            answer_buttons.append(button_rect)
+
+            # Кнопка меняет цвет при наведении
+            button_color = LIGHT_GRAY if button_rect.collidepoint(mouse_pos) else GRAY
+            pygame.draw.rect(screen, button_color, button_rect, border_radius=10)
+            draw_text(option, options_font, BLACK, screen, button_rect.centerx, button_rect.centery)
+
+    elif game_state == "results":
+        # Экран с результатами
+        draw_text("Тест завершен!", result_font, WHITE, screen, WIDTH // 2, HEIGHT // 3)
+        result_text = f"Ваш результат: {score} из {len(questions)}"
+        draw_text(result_text, question_font, GREEN, screen, WIDTH // 2, HEIGHT // 2)
+        draw_text("Нажмите любую клавишу, чтобы выйти", options_font, GRAY, screen, WIDTH // 2, HEIGHT * 0.7)
+
+
+    # Обновление экрана
+    pygame.display.flip()
+    clock.tick(FPS)
+
+# Завершение работы
+pygame.quit()
