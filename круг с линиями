@@ -1,0 +1,132 @@
+import pygame
+from abc import ABC, abstractmethod
+
+# Настройки окна
+WIDTH = 800
+HEIGHT = 600
+FPS = 60
+
+# Цвета
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+# Цвета для фигур
+YELLOW = (255, 255, 0)
+MAGENTA = (255, 0, 255) # В оригинале цвет ближе к мадженте/фуксии
+DARK_BLUE = (47, 47, 148) # Более темный синий, как на картинке
+# Цвета для линий
+LINE_RED = (210, 43, 43) # Насыщенный красный
+LINE_GREEN = (124, 252, 0) # Ярко-зеленый (lime)
+
+
+class Shape(ABC):
+    """Абстрактный класс формы."""
+
+    def __init__(self, x, y, color=BLACK):
+        self.x = x
+        self.y = y
+        self.color = color
+
+    @abstractmethod
+    def draw(self, screen):
+        pass
+
+
+class Circle(Shape):
+    """Круг"""
+
+    def __init__(self, x, y, radius, color=BLACK):
+        super().__init__(x, y, color)
+        self.radius = radius
+
+    def draw(self, screen):
+        pygame.draw.circle(screen, self.color, (self.x, self.y), self.radius)
+
+
+class Square(Shape):
+    """Квадрат"""
+
+    def __init__(self, x, y, size, color=BLACK):
+        super().__init__(x, y, color)
+        self.size = size
+
+    def draw(self, screen):
+        # Рисуем квадрат так, чтобы (x, y) был его центром
+        rect = pygame.Rect(self.x - self.size // 2, self.y - self.size // 2,
+                           self.size, self.size)
+        pygame.draw.rect(screen, self.color, rect)
+
+
+class Line(Shape):
+    """Линия"""
+
+    def __init__(self, start_pos, end_pos, width=1, color=BLACK):
+        super().__init__(*start_pos, color)
+        self.end_x, self.end_y = end_pos
+        self.width = width
+
+    def draw(self, screen):
+        pygame.draw.line(screen, self.color, (self.x, self.y), (self.end_x,
+                                                                self.end_y), self.width)
+
+def main():
+    # Инициализация Pygame
+    pygame.init()
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Диаграмма по изображению")
+    clock = pygame.time.Clock()
+
+    # --- Создание фигур и линий для сцены ---
+
+    # Параметры расположения
+    center_x, center_y = WIDTH // 2, HEIGHT // 2
+    offset = 150  # Расстояние от центра до фигур
+    shape_size = 80 # Размер квадратов и диаметр кругов
+    line_width = 5 # Толщина линий
+
+    # Координаты центров фигур
+    black_square_pos = (center_x - offset, center_y - offset)
+    blue_circle_pos = (center_x + offset, center_y - offset)
+    yellow_circle_pos = (center_x - offset, center_y + offset)
+    magenta_square_pos = (center_x + offset, center_y + offset)
+
+    # Создаем объекты
+    # Линии
+    green_line = Line(black_square_pos, magenta_square_pos, line_width, LINE_GREEN)
+    red_line = Line(yellow_circle_pos, blue_circle_pos, line_width, LINE_RED)
+
+    # Фигуры
+    black_square = Square(*black_square_pos, shape_size, BLACK)
+    blue_circle = Circle(*blue_circle_pos, shape_size // 2, DARK_BLUE)
+    yellow_circle = Circle(*yellow_circle_pos, shape_size // 2, YELLOW)
+    magenta_square = Square(*magenta_square_pos, shape_size, MAGENTA)
+
+    # Список всех объектов для отрисовки.
+    # Линии рисуем первыми, чтобы фигуры были поверх них.
+    shapes = [
+        green_line,
+        red_line,
+        black_square,
+        blue_circle,
+        yellow_circle,
+        magenta_square
+    ]
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        # Отрисовка
+        screen.fill(WHITE)
+        for shape in shapes:
+            shape.draw(screen)
+
+        pygame.display.flip()
+        clock.tick(FPS)
+
+    pygame.quit()
+
+
+if __name__ == "__main__":
+    main()
